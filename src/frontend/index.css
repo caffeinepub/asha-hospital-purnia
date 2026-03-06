@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Plus Jakarta Sans (body) ─────────────────────────────────── */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Bricolage Grotesque (display / brand) ─────────────────────── */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* Background: clean clinical white */
+    --background: 0.98 0.004 240;
+    --foreground: 0.15 0.025 250;
+
+    /* Cards: pure white */
+    --card: 1 0 0;
+    --card-foreground: 0.15 0.025 250;
+
+    --popover: 1 0 0;
+    --popover-foreground: 0.15 0.025 250;
+
+    /* Primary: strong medical blue */
+    --primary: 0.45 0.18 255;
+    --primary-foreground: 1 0 0;
+
+    /* Secondary: very light blue-gray */
+    --secondary: 0.94 0.018 245;
+    --secondary-foreground: 0.28 0.06 255;
+
+    /* Muted */
+    --muted: 0.94 0.008 240;
+    --muted-foreground: 0.52 0.025 250;
+
+    /* Accent: sky blue */
+    --accent: 0.62 0.15 230;
+    --accent-foreground: 1 0 0;
+
+    /* Destructive: red */
+    --destructive: 0.54 0.24 27;
+    --destructive-foreground: 1 0 0;
+
+    /* Success: green */
+    --success: 0.60 0.18 152;
+    --success-foreground: 1 0 0;
+
+    /* Warning: amber */
+    --warning: 0.78 0.18 80;
+    --warning-foreground: 0.15 0.03 60;
+
+    --border: 0.90 0.012 240;
+    --input: 0.90 0.012 240;
+    --ring: 0.45 0.18 255;
+
+    /* Emergency red — for 24×7 banner */
+    --emergency: 0.52 0.24 20;
+    --emergency-foreground: 1 0 0;
+
+    /* WhatsApp green */
+    --whatsapp: 0.58 0.20 148;
+    --whatsapp-foreground: 1 0 0;
+
+    /* Location teal */
+    --location: 0.52 0.14 195;
+    --location-foreground: 1 0 0;
+
+    /* Charts */
+    --chart-1: 0.45 0.18 255;
+    --chart-2: 0.60 0.18 152;
+    --chart-3: 0.52 0.24 20;
+    --chart-4: 0.78 0.18 80;
+    --chart-5: 0.52 0.14 195;
+
+    --sidebar: 0.22 0.06 255;
+    --sidebar-foreground: 0.95 0 0;
+    --sidebar-primary: 0.62 0.15 230;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.32 0.10 255;
+    --sidebar-accent-foreground: 0.95 0 0;
+    --sidebar-border: 0.32 0.08 255;
+    --sidebar-ring: 0.62 0.15 230;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ── App Shell ── */
+#root {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: oklch(var(--background));
+}
+
+/* ── Bottom nav safe area ── */
+.bottom-nav-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* ── Pulse animation for emergency ── */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 oklch(0.52 0.24 20 / 0.45); }
+  70% { box-shadow: 0 0 0 10px oklch(0.52 0.24 20 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.52 0.24 20 / 0); }
+}
+
+.pulse-emergency {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+/* ── Hero pattern for medical feel ── */
+.hero-pattern {
+  background-image:
+    radial-gradient(circle at 15% 25%, oklch(0.62 0.15 230 / 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 85% 75%, oklch(0.45 0.18 255 / 0.10) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M26 22h-6v6h-6v-6h-6v-6h6v-6h6v6h6v6zm32 0h-6v6h-6v-6h-6v-6h6v-6h6v6h6v6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── Card hover lift ── */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px oklch(0.45 0.18 255 / 0.14);
+}
+
+/* ── Devanagari font optimization ── */
+.font-devanagari {
+  font-feature-settings: "kern" 1;
+  line-height: 1.7;
+}
