@@ -10,6 +10,16 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface Appointment {
+  'id' : bigint,
+  'status' : string,
+  'appointmentDate' : string,
+  'message' : string,
+  'patientName' : string,
+  'phone' : string,
+  'doctorName' : string,
+  'timeSlot' : string,
+}
 export interface ContactInfo {
   'mapLink' : string,
   'whatsapp' : string,
@@ -30,6 +40,12 @@ export interface HospitalInfo {
 }
 export interface Service { 'name' : string, 'description' : string }
 export interface _SERVICE {
+  'bookAppointment' : ActorMethod<
+    [string, string, string, string, string, string],
+    Appointment
+  >,
+  'getAppointmentById' : ActorMethod<[bigint], [] | [Appointment]>,
+  'getAppointments' : ActorMethod<[], Array<Appointment>>,
   'getContactInfo' : ActorMethod<[], ContactInfo>,
   'getDoctors' : ActorMethod<[], Array<Doctor>>,
   'getHospitalInfo' : ActorMethod<[], HospitalInfo>,

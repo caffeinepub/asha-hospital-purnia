@@ -8,6 +8,16 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const Appointment = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : IDL.Text,
+  'appointmentDate' : IDL.Text,
+  'message' : IDL.Text,
+  'patientName' : IDL.Text,
+  'phone' : IDL.Text,
+  'doctorName' : IDL.Text,
+  'timeSlot' : IDL.Text,
+});
 export const ContactInfo = IDL.Record({
   'mapLink' : IDL.Text,
   'whatsapp' : IDL.Text,
@@ -32,6 +42,13 @@ export const Service = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'bookAppointment' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [Appointment],
+      [],
+    ),
+  'getAppointmentById' : IDL.Func([IDL.Nat], [IDL.Opt(Appointment)], ['query']),
+  'getAppointments' : IDL.Func([], [IDL.Vec(Appointment)], ['query']),
   'getContactInfo' : IDL.Func([], [ContactInfo], ['query']),
   'getDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
   'getHospitalInfo' : IDL.Func([], [HospitalInfo], ['query']),
@@ -42,6 +59,16 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const Appointment = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : IDL.Text,
+    'appointmentDate' : IDL.Text,
+    'message' : IDL.Text,
+    'patientName' : IDL.Text,
+    'phone' : IDL.Text,
+    'doctorName' : IDL.Text,
+    'timeSlot' : IDL.Text,
+  });
   const ContactInfo = IDL.Record({
     'mapLink' : IDL.Text,
     'whatsapp' : IDL.Text,
@@ -63,6 +90,17 @@ export const idlFactory = ({ IDL }) => {
   const Service = IDL.Record({ 'name' : IDL.Text, 'description' : IDL.Text });
   
   return IDL.Service({
+    'bookAppointment' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [Appointment],
+        [],
+      ),
+    'getAppointmentById' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(Appointment)],
+        ['query'],
+      ),
+    'getAppointments' : IDL.Func([], [IDL.Vec(Appointment)], ['query']),
     'getContactInfo' : IDL.Func([], [ContactInfo], ['query']),
     'getDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
     'getHospitalInfo' : IDL.Func([], [HospitalInfo], ['query']),

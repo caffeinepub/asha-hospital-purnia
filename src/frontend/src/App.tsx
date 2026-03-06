@@ -1,12 +1,13 @@
-import { Activity, Home, Phone, Stethoscope } from "lucide-react";
+import { Activity, CalendarDays, Home, Phone, Stethoscope } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { ContactPage } from "./pages/ContactPage";
 import { DoctorsPage } from "./pages/DoctorsPage";
 import { HomePage } from "./pages/HomePage";
+import { OpdPage } from "./pages/OpdPage";
 import { ServicesPage } from "./pages/ServicesPage";
 
-type Tab = "home" | "doctors" | "services" | "contact";
+type Tab = "home" | "doctors" | "services" | "contact" | "opd";
 
 interface NavItem {
   id: Tab;
@@ -40,9 +41,15 @@ const NAV_ITEMS: NavItem[] = [
     icon: <Phone size={20} strokeWidth={2} />,
     ocid: "nav.contact.tab",
   },
+  {
+    id: "opd",
+    label: "OPD",
+    icon: <CalendarDays size={20} strokeWidth={2} />,
+    ocid: "nav.opd.tab",
+  },
 ];
 
-const PAGE_ORDER: Tab[] = ["home", "doctors", "services", "contact"];
+const PAGE_ORDER: Tab[] = ["home", "doctors", "services", "contact", "opd"];
 
 function getPageTransition(prev: Tab, next: Tab) {
   const prevIdx = PAGE_ORDER.indexOf(prev);
@@ -78,6 +85,8 @@ export default function App() {
         return <ServicesPage />;
       case "contact":
         return <ContactPage />;
+      case "opd":
+        return <OpdPage />;
     }
   };
 

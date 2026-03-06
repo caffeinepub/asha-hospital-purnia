@@ -1,35 +1,31 @@
 # Asha Hospital Purnia
 
 ## Current State
-New project — no existing app code.
+The app has 4 tabs: Home, Doctors, Services, Contact. Backend stores hospital info, 9 doctors, services, and contact info. No appointment booking functionality exists.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Hospital landing page app for Asha Hospital, Purnia
-- Hero section with hospital name, tagline and 24x7 emergency banner
-- About/Introduction section describing multi-specialty facilities (NICU, PICU, ICU, Ventilator)
-- Doctors list section with all 9 doctors: name, qualification, specialization
-- Founder profile section for Dr. Subhash Kumar Singh
-- Why Choose Us section with 5 key highlights
-- Hospital gallery/highlights section (NICU Ward, Child Ward, Emergency Ward, Doctors List)
-- Contact section with phone numbers (8405967314, 8434180017), OPD timings (9 AM - 4 PM)
-- Location section showing Asha Hospital, Purnia, Bihar
-- Call buttons for direct phone dialing
-- WhatsApp appointment button
-- Bottom navigation: Home, Doctors, Services, Contact
+- Online OPD Appointment booking form (new tab "OPD अपॉइंटमेंट")
+- Backend: OPD appointment type with fields: patient name, phone, doctor selected, date, time slot, message
+- Backend: `bookAppointment` function to store appointment
+- Backend: `getAppointments` function to retrieve all appointments (admin view)
+- Frontend: OPD Booking page with form — patient name, phone number, select doctor, select date, select time slot, optional message
+- Frontend: Success confirmation screen after booking
+- Frontend: Show booked appointment reference number
+- Payment note: No actual online payment gateway (Stripe not enabled); show "Pay at Hospital" option clearly with UPI QR code placeholder
 
 ### Modify
-- None
+- App.tsx: Add 5th nav tab "OPD" with calendar icon
+- Backend: Add appointment storage and booking functions
 
 ### Remove
-- None
+- Nothing removed
 
 ## Implementation Plan
-1. Backend: Store hospital info, doctors list, contact details, and services as stable data
-2. Frontend Home page: Hero banner with hospital name and 24x7 emergency info
-3. Frontend Doctors page: Table/card list of all 9 doctors with qualification and specialty
-4. Frontend Services page: NICU, PICU, ICU, Emergency, Ventilator and other services
-5. Frontend Contact page: Phone numbers, OPD timing, location, call/WhatsApp buttons
-6. Bottom navigation with 4 tabs
-7. Hindi language throughout the UI
+1. Update backend (main.mo) to add Appointment type, bookAppointment, getAppointments functions
+2. Regenerate backend.d.ts types
+3. Create OpdPage.tsx with booking form: name, phone, doctor dropdown (from backend doctors list), date picker, time slot selector, optional note
+4. Add success state showing confirmation with appointment ID
+5. Add OPD tab to App.tsx navigation with CalendarDays icon
+6. Wire form to backend bookAppointment call

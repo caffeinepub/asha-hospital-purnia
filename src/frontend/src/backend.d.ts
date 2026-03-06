@@ -16,6 +16,16 @@ export interface Doctor {
     specialization: string;
     qualification: string;
 }
+export interface Appointment {
+    id: bigint;
+    status: string;
+    appointmentDate: string;
+    message: string;
+    patientName: string;
+    phone: string;
+    doctorName: string;
+    timeSlot: string;
+}
 export interface ContactInfo {
     mapLink: string;
     whatsapp: string;
@@ -30,6 +40,9 @@ export interface HospitalInfo {
     address: string;
 }
 export interface backendInterface {
+    bookAppointment(patientName: string, phone: string, doctorName: string, appointmentDate: string, timeSlot: string, message: string): Promise<Appointment>;
+    getAppointmentById(id: bigint): Promise<Appointment | null>;
+    getAppointments(): Promise<Array<Appointment>>;
     getContactInfo(): Promise<ContactInfo>;
     getDoctors(): Promise<Array<Doctor>>;
     getHospitalInfo(): Promise<HospitalInfo>;
