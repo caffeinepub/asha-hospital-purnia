@@ -1,13 +1,20 @@
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Camera,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   HeartPulse,
   MessageCircle,
   Phone,
   ShieldCheck,
   Star,
+  X,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useState } from "react";
 import {
   useGetContactInfo,
   useGetHospitalInfo,
@@ -30,6 +37,33 @@ const itemVariants = {
   },
 };
 
+const GALLERY_IMAGES = [
+  {
+    src: "/assets/uploads/image-1.png",
+    alt: "NICU वार्ड – फोटोथेरेपी में नवजात शिशु",
+  },
+  { src: "/assets/uploads/image-1-2.png", alt: "हॉस्पिटल बैनर – सभी डॉक्टर" },
+  { src: "/assets/uploads/image-2-3.png", alt: "NICU वार्ड" },
+  { src: "/assets/uploads/image-3-4.png", alt: "मेडिकल उपकरण / वेंटिलेटर" },
+  { src: "/assets/uploads/image-4-5.png", alt: "NICU वार्ड – विस्तृत दृश्य" },
+  { src: "/assets/uploads/image-5-6.png", alt: "NICU फोटोथेरेपी" },
+  { src: "/assets/uploads/image-6-7.png", alt: "इनक्यूबेटर में बच्चा – फोटोथेरेपी" },
+  { src: "/assets/uploads/image-7-8.png", alt: "हॉस्पिटल बैनर – डॉक्टर सूची" },
+  { src: "/assets/uploads/image-8-9.png", alt: "बाल वार्ड – बच्चा मरीज" },
+  { src: "/assets/uploads/image-9-10.png", alt: "मेडिकल उपकरण – क्लोज़-अप" },
+  { src: "/assets/uploads/image-10-11.png", alt: "NICU – फोटोथेरेपी लाइट्स" },
+  { src: "/assets/uploads/image-11-12.png", alt: "वार्मर में बच्चा" },
+  { src: "/assets/uploads/image-12-13.png", alt: "NICU – विस्तृत दृश्य" },
+  { src: "/assets/uploads/image-13-14.png", alt: "NICU फोटोथेरेपी – क्लोज़-अप" },
+  { src: "/assets/uploads/image-14-16.png", alt: "NICU वार्ड" },
+  { src: "/assets/uploads/image-15-15.png", alt: "फोटोथेरेपी में बच्चा" },
+  { src: "/assets/uploads/image-16-17.png", alt: "NICU वार्ड" },
+  { src: "/assets/uploads/image-17-18.png", alt: "NICU वार्ड" },
+  { src: "/assets/uploads/image-18-19.png", alt: "NICU वार्ड" },
+  { src: "/assets/uploads/image-19-20.png", alt: "NICU वार्ड" },
+  { src: "/assets/uploads/image-20-21.png", alt: "NICU वार्ड" },
+];
+
 const SPECIALTY_CHIPS = [
   "NICU",
   "PICU",
@@ -45,6 +79,24 @@ export function HomePage() {
   const { data: whyChoose, isLoading: whyLoading } = useGetWhyChooseUs();
 
   const isLoading = infoLoading;
+
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const openLightbox = useCallback((index: number) => {
+    setActiveIndex(index);
+    setLightboxOpen(true);
+  }, []);
+
+  const goPrev = useCallback(() => {
+    setActiveIndex(
+      (i) => (i - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length,
+    );
+  }, []);
+
+  const goNext = useCallback(() => {
+    setActiveIndex((i) => (i + 1) % GALLERY_IMAGES.length);
+  }, []);
 
   return (
     <main className="flex flex-col flex-1 overflow-y-auto">
@@ -279,6 +331,158 @@ export function HomePage() {
           )}
         </div>
       </motion.section>
+
+      {/* ─── Gallery ─── */}
+      <motion.section
+        data-ocid="gallery.section"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.75, duration: 0.4 }}
+        className="mx-4 mt-4 mb-2"
+      >
+        <div className="bg-card rounded-2xl border border-border shadow-card p-4">
+          {/* Section Header */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1 h-5 bg-primary rounded-full" />
+            <Camera size={16} className="text-primary" />
+            <h2 className="font-display font-bold text-foreground text-base font-devanagari">
+              हमारी गैलरी
+            </h2>
+          </div>
+
+          {/* 2-column masonry-style grid */}
+          <div className="grid grid-cols-2 gap-2">
+            {GALLERY_IMAGES.map((img, index) => (
+              <motion.button
+                key={img.src}
+                data-ocid={`gallery.item.${index + 1}`}
+                onClick={() => openLightbox(index)}
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.05 * index, duration: 0.3 }}
+                className="relative block w-full overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group"
+                aria-label={`गैलरी तस्वीर ${index + 1}: ${img.alt}`}
+              >
+                <div
+                  className={`w-full ${index % 5 === 1 ? "aspect-[3/4]" : index % 5 === 3 ? "aspect-[4/5]" : "aspect-square"}`}
+                >
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-200 rounded-xl" />
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ─── Lightbox Dialog ─── */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent
+          data-ocid="gallery.dialog"
+          className="max-w-screen max-h-screen w-screen h-screen p-0 m-0 border-0 rounded-none bg-black/95 flex flex-col items-center justify-center"
+          aria-describedby={undefined}
+        >
+          {/* Close button */}
+          <Button
+            data-ocid="gallery.close_button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/25 text-white rounded-full w-10 h-10"
+            aria-label="बंद करें"
+          >
+            <X size={20} />
+          </Button>
+
+          {/* Image counter */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-black/50 text-white text-xs px-3 py-1 rounded-full font-mono">
+            {activeIndex + 1} / {GALLERY_IMAGES.length}
+          </div>
+
+          {/* Main image */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="flex items-center justify-center w-full h-full px-16 py-16"
+            >
+              <img
+                src={GALLERY_IMAGES[activeIndex].src}
+                alt={GALLERY_IMAGES[activeIndex].alt}
+                className="max-w-full max-h-full object-contain rounded-xl"
+                style={{ maxHeight: "calc(100vh - 8rem)" }}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Caption */}
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 text-center px-4">
+            <p className="text-white/80 text-xs font-devanagari text-center max-w-xs">
+              {GALLERY_IMAGES[activeIndex].alt}
+            </p>
+          </div>
+
+          {/* Prev button */}
+          <Button
+            data-ocid="gallery.pagination_prev"
+            variant="ghost"
+            size="icon"
+            onClick={goPrev}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/25 text-white rounded-full w-11 h-11"
+            aria-label="पिछली तस्वीर"
+          >
+            <ChevronLeft size={24} />
+          </Button>
+
+          {/* Next button */}
+          <Button
+            data-ocid="gallery.pagination_next"
+            variant="ghost"
+            size="icon"
+            onClick={goNext}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/25 text-white rounded-full w-11 h-11"
+            aria-label="अगली तस्वीर"
+          >
+            <ChevronRight size={24} />
+          </Button>
+
+          {/* Thumbnail strip */}
+          <div className="absolute bottom-4 left-0 right-0 z-50 flex justify-center">
+            <div className="flex gap-1.5 overflow-x-auto max-w-[90vw] px-4 py-1 scrollbar-hide">
+              {GALLERY_IMAGES.map((img, idx) => (
+                <button
+                  type="button"
+                  key={img.src}
+                  onClick={() => setActiveIndex(idx)}
+                  className={`shrink-0 w-9 h-9 rounded-lg overflow-hidden transition-all ${
+                    idx === activeIndex
+                      ? "ring-2 ring-white ring-offset-1 ring-offset-black/50 opacity-100"
+                      : "opacity-50 hover:opacity-80"
+                  }`}
+                  aria-label={`तस्वीर ${idx + 1} देखें`}
+                >
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* ─── Footer ─── */}
       <footer className="mt-auto px-4 pb-6 pt-2 text-center">

@@ -1,7 +1,7 @@
 import Array "mo:core/Array";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   public type Doctor = {
     name : Text;

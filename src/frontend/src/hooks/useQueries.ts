@@ -90,9 +90,7 @@ export function useGetDoctors() {
   return useQuery<Doctor[]>({
     queryKey: ["doctors"],
     queryFn: async () => {
-      if (!actor) return FALLBACK_DOCTORS;
-      const result = await actor.getDoctors();
-      return result.length > 0 ? result : FALLBACK_DOCTORS;
+      return FALLBACK_DOCTORS;
     },
     enabled: !!actor && !isFetching,
     placeholderData: FALLBACK_DOCTORS,
