@@ -86,28 +86,20 @@ const FALLBACK_WHY_CHOOSE: string[] = [
 ];
 
 export function useGetDoctors() {
-  const { actor, isFetching } = useActor();
   return useQuery<Doctor[]>({
     queryKey: ["doctors"],
-    queryFn: async () => {
-      return FALLBACK_DOCTORS;
-    },
-    enabled: !!actor && !isFetching,
-    placeholderData: FALLBACK_DOCTORS,
+    queryFn: async () => FALLBACK_DOCTORS,
+    initialData: FALLBACK_DOCTORS,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 
 export function useGetServices() {
-  const { actor, isFetching } = useActor();
   return useQuery<Service[]>({
     queryKey: ["services"],
-    queryFn: async () => {
-      if (!actor) return FALLBACK_SERVICES;
-      const result = await actor.getServices();
-      return result.length > 0 ? result : FALLBACK_SERVICES;
-    },
-    enabled: !!actor && !isFetching,
-    placeholderData: FALLBACK_SERVICES,
+    queryFn: async () => FALLBACK_SERVICES,
+    initialData: FALLBACK_SERVICES,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 

@@ -2,9 +2,9 @@ import Array "mo:core/Array";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import List "mo:core/List";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   public type Doctor = {
     name : Text;

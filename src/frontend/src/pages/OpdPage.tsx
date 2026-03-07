@@ -42,6 +42,8 @@ function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 
+type OpdType = "normal" | "night";
+
 interface FormState {
   patientName: string;
   phone: string;
@@ -49,6 +51,7 @@ interface FormState {
   appointmentDate: string;
   timeSlot: string;
   message: string;
+  opdType: OpdType;
 }
 
 const INITIAL_FORM: FormState = {
@@ -58,6 +61,7 @@ const INITIAL_FORM: FormState = {
   appointmentDate: "",
   timeSlot: "",
   message: "",
+  opdType: "normal" as OpdType,
 };
 
 interface FieldError {
@@ -67,6 +71,11 @@ interface FieldError {
   appointmentDate?: string;
   timeSlot?: string;
 }
+
+const OPD_FEES: Record<OpdType, number> = {
+  normal: 600,
+  night: 1000,
+};
 
 function validate(form: FormState): FieldError {
   const errors: FieldError = {};
@@ -82,8 +91,35 @@ function validate(form: FormState): FieldError {
   return errors;
 }
 
-function UpiCopyCard() {
+function UpiCopyCard({ opdType }: { opdType: OpdType }) {
   const [copied, setCopied] = useState(false);
+  const fee = OPD_FEES[opdType];
+  const isNight = opdType === "night";
+  const colorClass = isNight
+    ? {
+        border: "border-indigo-200",
+        bg: "bg-gradient-to-br from-indigo-50 to-purple-50",
+        iconBg: "bg-indigo-100",
+        icon: "text-indigo-600",
+        label: "text-indigo-800",
+        sub: "text-indigo-700",
+        upiBorder: "border-indigo-100",
+        upiLabel: "text-indigo-600",
+        upiVal: "text-indigo-900",
+        copyBtn: "bg-indigo-100 hover:bg-indigo-200 text-indigo-700",
+      }
+    : {
+        border: "border-sky-200",
+        bg: "bg-gradient-to-br from-sky-50 to-teal-50",
+        iconBg: "bg-sky-100",
+        icon: "text-sky-600",
+        label: "text-sky-800",
+        sub: "text-sky-700",
+        upiBorder: "border-sky-100",
+        upiLabel: "text-sky-600",
+        upiVal: "text-sky-900",
+        copyBtn: "bg-sky-100 hover:bg-sky-200 text-sky-700",
+      };
 
   const handleCopy = () => {
     navigator.clipboard.writeText("ashahosp@upi").catch(() => {});
@@ -96,34 +132,51 @@ function UpiCopyCard() {
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-teal-50 p-4 mb-5 shadow-sm"
+      className={`rounded-2xl border p-4 mb-5 shadow-sm ${colorClass.border} ${colorClass.bg}`}
     >
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 w-8 h-8 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
-          <CreditCard size={16} className="text-sky-600" />
+        <div
+          className={`mt-0.5 w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${colorClass.iconBg}`}
+        >
+          <CreditCard size={16} className={colorClass.icon} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <Info size={13} className="text-sky-600 shrink-0" />
-            <p className="text-sm font-bold text-sky-800 font-devanagari">
+            <Info size={13} className={`shrink-0 ${colorClass.icon}`} />
+            <p
+              className={`text-sm font-bold font-devanagari ${colorClass.label}`}
+            >
               शुल्क हॉस्पिटल में जमा करें
             </p>
           </div>
-          <p className="text-xs text-sky-700 font-devanagari mb-2.5">
-            OPD शुल्क: <span className="font-bold">₹200</span> &nbsp;|&nbsp; समय:
-            सुबह 9:30 – दोपहर 1:30 बजे
+          <p className={`text-xs font-devanagari mb-2.5 ${colorClass.sub}`}>
+            OPD शुल्क: <span className="font-bold text-base">₹{fee}</span>
+            &nbsp;|&nbsp;
+            {isNight ? (
+              <span className={`font-semibold ${colorClass.icon}`}>
+                नाइट OPD (रात 8 बजे – सुबह 8 बजे)
+              </span>
+            ) : (
+              <span>समय: सुबह 7:00 – रात 7:00 बजे</span>
+            )}
           </p>
 
           {/* UPI section */}
-          <div className="flex items-center gap-2 bg-white/70 rounded-xl px-3 py-2 border border-sky-100">
-            <span className="text-xs text-sky-600 font-semibold">UPI ID:</span>
-            <span className="text-sm font-bold text-sky-900 flex-1 font-mono">
+          <div
+            className={`flex items-center gap-2 bg-white/70 rounded-xl px-3 py-2 border ${colorClass.upiBorder}`}
+          >
+            <span className={`text-xs font-semibold ${colorClass.upiLabel}`}>
+              UPI ID:
+            </span>
+            <span
+              className={`text-sm font-bold flex-1 font-mono ${colorClass.upiVal}`}
+            >
               ashahosp@upi
             </span>
             <button
               type="button"
               onClick={handleCopy}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-sky-100 hover:bg-sky-200 transition-colors text-sky-700 text-xs font-semibold"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-colors text-xs font-semibold ${colorClass.copyBtn}`}
             >
               <Copy size={11} />
               {copied ? "Copied!" : "Copy"}
@@ -138,9 +191,11 @@ function UpiCopyCard() {
 function SuccessScreen({
   appointment,
   onReset,
+  opdType,
 }: {
   appointment: Appointment;
   onReset: () => void;
+  opdType: OpdType;
 }) {
   return (
     <motion.div
@@ -229,6 +284,26 @@ function SuccessScreen({
             </p>
             <p className="text-sm font-semibold text-foreground">
               {appointment.timeSlot}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-2.5 pt-3 border-t border-border">
+          <CreditCard
+            size={15}
+            className={`mt-0.5 shrink-0 ${opdType === "night" ? "text-indigo-500" : "text-sky-500"}`}
+          />
+          <div>
+            <p className="text-[11px] text-muted-foreground font-devanagari">
+              OPD शुल्क
+            </p>
+            <p
+              className={`text-sm font-bold ${opdType === "night" ? "text-indigo-600" : "text-sky-600"}`}
+            >
+              ₹{OPD_FEES[opdType]} &nbsp;
+              <span className="text-xs font-normal text-muted-foreground font-devanagari">
+                ({opdType === "night" ? "नाइट OPD" : "नॉर्मल OPD"})
+              </span>
             </p>
           </div>
         </div>
@@ -338,6 +413,7 @@ export function OpdPage() {
             key="success"
             appointment={bookedAppointment}
             onReset={handleReset}
+            opdType={form.opdType}
           />
         ) : (
           <motion.div
@@ -348,8 +424,63 @@ export function OpdPage() {
             transition={{ duration: 0.3 }}
             className="px-4 pt-5 pb-8"
           >
+            {/* OPD Type Selector */}
+            <div className="mb-5">
+              <p className="text-sm font-semibold font-devanagari mb-2.5">
+                OPD का प्रकार चुनें <span className="text-destructive">*</span>
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  data-ocid="opd.type.normal.toggle"
+                  onClick={() => setForm((p) => ({ ...p, opdType: "normal" }))}
+                  className={`flex flex-col items-center justify-center gap-1 rounded-2xl border-2 py-4 px-2 transition-all font-devanagari ${
+                    form.opdType === "normal"
+                      ? "border-sky-500 bg-sky-50 text-sky-700 shadow-md scale-[1.02]"
+                      : "border-border bg-card text-muted-foreground hover:border-sky-300"
+                  }`}
+                >
+                  <span className="text-2xl">🏥</span>
+                  <span className="text-sm font-bold text-center leading-tight">
+                    OPD
+                  </span>
+                  <span
+                    className={`text-base font-extrabold ${form.opdType === "normal" ? "text-sky-600" : "text-foreground"}`}
+                  >
+                    ₹600
+                  </span>
+                  <span className="text-[10px] opacity-70 text-center">
+                    सुबह 7:00 – रात 7:00
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  data-ocid="opd.type.night.toggle"
+                  onClick={() => setForm((p) => ({ ...p, opdType: "night" }))}
+                  className={`flex flex-col items-center justify-center gap-1 rounded-2xl border-2 py-4 px-2 transition-all font-devanagari ${
+                    form.opdType === "night"
+                      ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-md scale-[1.02]"
+                      : "border-border bg-card text-muted-foreground hover:border-indigo-300"
+                  }`}
+                >
+                  <span className="text-2xl">🌙</span>
+                  <span className="text-sm font-bold text-center leading-tight">
+                    नाइट OPD
+                  </span>
+                  <span
+                    className={`text-base font-extrabold ${form.opdType === "night" ? "text-indigo-600" : "text-foreground"}`}
+                  >
+                    ₹1000
+                  </span>
+                  <span className="text-[10px] opacity-70 text-center">
+                    रात 8 बजे – सुबह 8 बजे
+                  </span>
+                </button>
+              </div>
+            </div>
+
             {/* UPI / Payment info card */}
-            <UpiCopyCard />
+            <UpiCopyCard opdType={form.opdType} />
 
             {/* Booking form */}
             <form onSubmit={handleSubmit} noValidate className="space-y-4">

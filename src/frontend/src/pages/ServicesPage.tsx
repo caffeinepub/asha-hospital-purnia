@@ -71,6 +71,27 @@ const SERVICE_ICON_MAP: { match: string; config: ServiceIconConfig }[] = [
     },
   },
   {
+    match: "Emergency",
+    config: {
+      icon: <Zap size={20} strokeWidth={2} />,
+      bg: "bg-orange-50 text-orange-500",
+    },
+  },
+  {
+    match: "Diagnostics",
+    config: {
+      icon: <FlaskConical size={20} strokeWidth={2} />,
+      bg: "bg-emerald-50 text-emerald-600",
+    },
+  },
+  {
+    match: "Multi-Specialty",
+    config: {
+      icon: <Activity size={20} strokeWidth={2} />,
+      bg: "bg-blue-50 text-blue-600",
+    },
+  },
+  {
     match: "OT",
     config: {
       icon: <Scissors size={20} strokeWidth={2} />,
