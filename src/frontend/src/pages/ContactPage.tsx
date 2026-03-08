@@ -6,8 +6,11 @@ import {
   MapPin,
   MessageCircle,
   Phone,
+  QrCode,
 } from "lucide-react";
 import { motion } from "motion/react";
+import QRCode from "qrcode";
+import { useEffect, useState } from "react";
 import { useGetContactInfo, useGetHospitalInfo } from "../hooks/useQueries";
 
 function fadeInUp(i: number) {
@@ -18,9 +21,25 @@ function fadeInUp(i: number) {
   };
 }
 
+function useQRCode(url: string) {
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  useEffect(() => {
+    QRCode.toDataURL(url, {
+      width: 200,
+      margin: 2,
+      color: { dark: "#1a1a2e", light: "#ffffff" },
+    })
+      .then(setQrDataUrl)
+      .catch(() => {});
+  }, [url]);
+  return qrDataUrl;
+}
+
 export function ContactPage() {
   const { data: contact, isLoading } = useGetContactInfo();
   const { data: hospitalInfo } = useGetHospitalInfo();
+  const websiteUrl = window.location.origin;
+  const qrDataUrl = useQRCode(websiteUrl);
 
   return (
     <main className="flex flex-col flex-1 overflow-y-auto">
@@ -219,6 +238,40 @@ export function ContactPage() {
           </p>
           <p className="text-xs text-muted-foreground mt-1 font-devanagari leading-relaxed">
             इमरजेंसी सेवा 24 घंटे, सातों दिन उपलब्ध है।
+          </p>
+        </motion.div>
+
+        {/* QR Code Section */}
+        <motion.div
+          {...fadeInUp(7)}
+          data-ocid="contact.qrcode.card"
+          className="bg-card border border-border rounded-2xl p-5 shadow-card flex flex-col items-center text-center"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <QrCode size={18} className="text-primary" strokeWidth={2} />
+            <h3 className="font-display font-bold text-foreground text-sm">
+              वेबसाइट QR कोड
+            </h3>
+          </div>
+          <p className="text-xs text-muted-foreground font-devanagari mb-4 leading-relaxed">
+            इस QR कोड को स्कैन करें और सीधे Asha Hospital की वेबसाइट खोलें
+          </p>
+          {qrDataUrl ? (
+            <div className="bg-white rounded-2xl p-3 shadow-md inline-block">
+              <img
+                src={qrDataUrl}
+                alt="Asha Hospital Website QR Code"
+                className="w-44 h-44 object-contain"
+              />
+            </div>
+          ) : (
+            <Skeleton className="w-44 h-44 rounded-2xl" />
+          )}
+          <p className="text-[10px] text-muted-foreground mt-3 font-mono break-all">
+            {websiteUrl}
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-1 font-devanagari">
+            Asha Hospital, Purnia, Bihar
           </p>
         </motion.div>
       </div>
